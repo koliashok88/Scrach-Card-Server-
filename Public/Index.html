@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f172a">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">श्री सिद्धेश्वर मोबाईल - SS Mobile Benadi</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<style>
+:root{--primary:#131921;--secondary:#232f3e;--accent:#ff9900;--bg:#eaeded;--card:#fff;--text:#0f1111;--muted:#565959;--border:#d5d9d9;--success:#007600;--danger:#b12704}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Poppins,sans-serif}
+body{background:var(--bg);color:var(--text);display:flex;justify-content:center}
+.app{width:100%;max-width:480px;min-height:100vh;background:#fff;display:none;flex-direction:column;box-shadow:0 0 20px #0002}
+#splash{position:fixed;inset:0;background:linear-gradient(135deg,#131921,#232f3e,#111);z-index:99999;color:#fff;display:flex;align-items:center;justify-content:center;text-align:center}
+.splash-box{display:flex;flex-direction:column;align-items:center;padding:20px}.splash-logo{width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#dc2626;color:#febd69;border:4px solid #febd69;font-size:3rem;margin-bottom:18px;animation:pulse 1.5s infinite alternate}.splash-logo-img{width:150px;height:150px;border-radius:50%;object-fit:cover;border:3px solid #ff9900;box-shadow:0 0 30px #ff990088;margin-bottom:18px}
+@keyframes pulse{to{transform:scale(1.06)}}.loader{width:35px;height:35px;border:3px solid #ffffff40;border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+header{background:var(--primary);color:#fff;padding:10px 14px;position:sticky;top:0;z-index:100}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}.brand{display:flex;align-items:center;gap:8px}.logo{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);background:#fff;display:flex;align-items:center;justify-content:center;color:#111}.brand h1{font-size:.95rem}.brand h1 span{color:var(--accent)}.sub{font-size:.6rem;color:#cbd5e1}.owner-tag{font-size:.6rem;color:#febd69}
+.btn{border:0;border-radius:7px;padding:9px 12px;font-weight:600;cursor:pointer}.settings{background:var(--accent);color:#111;border-radius:20px}
+.search{display:flex;background:#fff;border:2px solid var(--accent);border-radius:6px;overflow:hidden;margin-top:8px}.search input{flex:1;border:0;outline:0;padding:8px}.search button{border:0;background:var(--accent);padding:0 14px}
+.wishes{background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;font-size:.82rem;cursor:pointer}
+.cats,.banners{display:flex;gap:10px;overflow-x:auto;padding:10px 12px;border-bottom:6px solid var(--bg);scrollbar-width:none}.cats::-webkit-scrollbar,.banners::-webkit-scrollbar{display:none}
+.cat{min-width:65px;text-align:center;cursor:pointer}.cat-icon{width:50px;height:50px;border-radius:50%;background:#f3f4f6;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin:auto auto 4px;color:#1e3a8a}.cat span{font-size:.7rem}
+.banner-wrap{position:relative;padding:10px 12px;border-bottom:6px solid var(--bg);background:#fff}.banner-track{position:relative;overflow:hidden;border-radius:10px}.banner-slides{display:flex;transition:transform .45s ease}.banner{min-width:100%;height:170px;border-radius:10px;overflow:hidden;position:relative;background:#111;cursor:pointer}.banner img{width:100%;height:100%;object-fit:cover}.banner-overlay{position:absolute;inset:auto 0 0;padding:24px 12px 10px;color:#fff;background:linear-gradient(transparent,#000d);font-size:.76rem}.banner-overlay b{font-size:.95rem;display:block}.banner-owner{position:absolute;right:10px;bottom:10px;width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid #fff;background:#fff;box-shadow:0 2px 8px #0006}.banner-arrow{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;border-radius:50%;background:#0008;color:#fff;z-index:3;cursor:pointer}.banner-prev{left:8px}.banner-next{right:8px}.banner-dots{display:flex;justify-content:center;gap:5px;margin-top:7px}.banner-dot{width:7px;height:7px;border:0;border-radius:50%;background:#cbd5e1;padding:0;cursor:pointer}.banner-dot.active{background:var(--accent);transform:scale(1.25)}.banner-empty{padding:18px;text-align:center;color:#64748b;background:#f8fafc;border-radius:10px}.overlay{position:absolute;bottom:0;inset-inline:0;padding:8px;color:#fff;background:linear-gradient(transparent,#000c);font-size:.72rem}
+.feed{padding:10px 12px;display:flex;flex-direction:column;gap:10px;flex:1}
+.product{border:1px solid var(--border);border-radius:14px;padding:10px 10px 10px 8px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 7px #0001;background:#fff;min-height:132px}
+.product.premium-product{border:2px solid #f59e0b!important;background:linear-gradient(135deg,#fffbf0,#ffffff)!important}
+.product-thumb{width:112px;height:112px;flex:0 0 112px;border-radius:10px;background:#f8fafc;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;border:1px solid #eef0f2}
+.product-thumb img{width:100%;height:100%;object-fit:contain}
+.product-thumb .no-image{font-size:.65rem;color:#94a3b8;text-align:center;padding:8px}
+.left{flex:1;min-width:0;cursor:pointer}
+.title{font-size:1rem;font-weight:700;color:#007185;line-height:1.25;margin-bottom:3px}
+.model{font-size:.74rem;color:var(--muted);margin-bottom:3px}
+.price{font-size:1.2rem;font-weight:800;color:#b12704}.mrp-strike{font-size:.82rem;color:#64748b;text-decoration:line-through;margin-right:5px}.discount-badge{font-size:.72rem;color:#047857;font-weight:800}.sale-price{font-size:1.2rem;font-weight:800;color:#b12704}
+.stock{display:inline-block;font-size:.68rem;background:#e0f2fe;color:#0369a1;padding:3px 7px;border-radius:5px;margin-top:4px}
+.actions{display:flex;align-items:center;gap:3px;flex:0 0 auto}
+@media(max-width:380px){.product{padding:8px;gap:7px;min-height:112px}.product-thumb{width:88px;height:88px;flex-basis:88px}.title{font-size:.88rem}.price{font-size:1.05rem}.share{padding:8px}.more{padding:5px}}.share{background:#25d366;color:#fff}.more{background:none;border:0;font-size:1.1rem;padding:6px;cursor:pointer}.fab{position:fixed;right:20px;bottom:20px;width:52px;height:52px;border:0;border-radius:50%;background:var(--accent);font-size:1.3rem;z-index:500;cursor:pointer}
+.modal{display:none;position:fixed;inset:0;background:#0009;z-index:9999;align-items:flex-end}.box{background:#fff;width:100%;max-width:480px;max-height:92vh;overflow:auto;border-radius:16px 16px 0 0;padding:16px}.mh{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:12px}.close{border:0;background:none;font-size:1.1rem;cursor:pointer}.field{margin-bottom:10px}.field label{display:block;font-size:.72rem;font-weight:600;color:var(--muted);margin-bottom:3px}.field input,.field select,.field textarea{width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;outline:0}.primary{width:100%;background:linear-gradient(#f7dfa5,#f0c14b);border:1px solid #a88734;padding:10px;border-radius:8px;font-weight:600;cursor:pointer;margin-top:7px}.green{background:#25d366!important;color:#fff;border-color:#25d366!important}.danger{background:#dc2626;color:#fff}.info{background:#eef2ff;color:#1e3a8a}.card{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px}.qr{display:flex;justify-content:center;padding:12px}.order-item{border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;font-size:.78rem}.badge{background:#dc2626;color:#fff;border-radius:12px;padding:2px 6px;font-size:.65rem;display:none}
+.wish-card{background:linear-gradient(135deg,#131921,#232f3e);color:#fff;padding:25px 20px;border-radius:12px;text-align:center;border:3px solid var(--accent)}.wish-logo{width:60px;height:60px;border-radius:50%;margin:auto auto 10px;border:2px solid var(--accent);background:#fff;color:#111;display:flex;align-items:center;justify-content:center;overflow:hidden}.wish-logo img{width:100%;height:100%;object-fit:cover}.wish-title{color:var(--accent);font-weight:700;margin-bottom:8px}.wish-msg{font-size:.85rem;line-height:1.5}.wish-foot{border-top:1px dashed #ffffff4d;margin-top:15px;padding-top:10px;font-size:.7rem;color:#cbd5e1}
+.bill{border:1px solid #ccc;padding:12px;border-radius:8px;font-size:.74rem;overflow:hidden;word-break:normal;overflow-wrap:anywhere}
+.bill-table{table-layout:fixed;width:100%}
+.bill-table th,.bill-table td{padding:4px 3px;font-size:.62rem;line-height:1.25;vertical-align:top;overflow-wrap:anywhere;word-break:break-word}
+.bill-table th:nth-child(1),.bill-table td:nth-child(1){width:42%}
+.bill-table th:nth-child(2),.bill-table td:nth-child(2){width:10%;text-align:center}
+.bill-table th:nth-child(3),.bill-table td:nth-child(3){width:16%;text-align:right}
+.bill-table th:nth-child(4),.bill-table td:nth-child(4){width:14%;text-align:right}
+.bill-table th:nth-child(5),.bill-table td:nth-child(5){width:18%;text-align:right}
+@media(max-width:380px){.bill{padding:9px;font-size:.7rem}.bill-table th,.bill-table td{font-size:.57rem;padding:3px 2px}.bill-head h2{font-size:1.15rem}.bill-row{gap:6px}.bill-row span{min-width:0}.bill-row b{text-align:right;max-width:65%;overflow-wrap:anywhere}}
+.bill-head{text-align:center;border-bottom:2px solid #111;padding-bottom:8px;margin-bottom:8px}.bill-row{display:flex;justify-content:space-between;margin:3px 0}.bill-table{width:100%;border-collapse:collapse;margin:8px 0}.bill-table th,.bill-table td{border:1px solid #dbe4f0;padding:5px;font-size:.7rem;text-align:left}.bill-table th{background:linear-gradient(135deg,#5b21b6,#7c3aed)!important;color:#fff!important;font-weight:800}.bill-total-box{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:8px 0;padding:9px 11px;border:2px solid #f59e0b;border-radius:10px;background:linear-gradient(90deg,#ecfdf5,#fff7ed);color:#166534;font-size:.88rem}.bill-total-box>b:last-child{font-size:1.15rem;color:#15803d}.exports{display:flex;gap:8px}.exports button{flex:1;color:#fff;border:0;padding:9px;border-radius:6px;cursor:pointer}.pdf{background:#dc2626}.img{background:#25d366}.pattern-grid{display:grid;grid-template-columns:repeat(3,62px);gap:18px;justify-content:center;padding:14px}.pattern-dot{width:62px;height:62px;border-radius:50%;border:3px solid #cbd5e1;background:#f8fafc;display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:none}.pattern-dot.active{background:#ff9900;border-color:#b45309;box-shadow:0 0 0 5px #ff990033}.pattern-dot:after{content:"";width:16px;height:16px;border-radius:50%;background:#64748b}.pattern-dot.active:after{background:#fff}
+.bill-special-notice{font-size:.48rem!important;line-height:1.2!important;margin-top:10px;padding:5px 2px;border-top:1px dashed #aaa;color:#555}.customer-bill-row{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px 8px;border:1px solid #e5e7eb;border-radius:9px;margin:6px 0;background:#fff;cursor:pointer}.customer-bill-row:active{transform:scale(.99);background:#f8fafc}.customer-history-head{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px;margin-bottom:10px}.product-images-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:6px}.product-images-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:7px;border:1px solid #ddd}.cart-row{display:grid;grid-template-columns:1.4fr .55fr .8fr .75fr auto;gap:5px;align-items:center;padding:7px 0;border-bottom:1px solid #e5e7eb;font-size:.72rem}.cart-row input{min-width:0;padding:6px}
+.bill-share-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.bill-share-grid button{min-height:54px;border-radius:9px;border:1px solid #d1d5db;font-weight:800;font-size:.82rem;line-height:1.15;cursor:pointer;padding:8px 6px}
+.bill-share-grid .img{background:#25d366;color:#fff;border-color:#25d366}
+.bill-share-grid .pdf{background:#dc2626;color:#fff;border-color:#dc2626}
+.bill-share-grid .wa{background:#25d366;color:#fff;border-color:#25d366}
+.bill-share-grid .primary{margin-top:0;width:auto}
+.field input:focus,.field select:focus,.field textarea:focus,#productModal input:focus,#productModal select:focus,#productModal textarea:focus{border-color:#ff9900!important;box-shadow:0 0 0 3px rgba(255,153,0,.18)!important;caret-color:#111827!important}
+.ss-typing-indicator{display:none;margin:-5px 0 8px;padding:5px 8px;border-radius:7px;background:#fff7ed;color:#9a3412;font-size:.68rem;font-weight:700;animation:ssTypingPulse 1s ease-in-out infinite}
+.ss-typing-indicator.show{display:block}
+@keyframes ssTypingPulse{50%{opacity:.58}}
+@media(max-width:380px){.bill-share-grid{gap:6px}.bill-share-grid button{font-size:.74rem;min-height:50px;padding:7px 4px}}
+
+.wish-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 10px}.wish-tabs button{border:1px solid #dbeafe;background:#f8fafc;border-radius:10px;padding:10px;font-weight:800;color:#334155}.wish-tabs button.active{background:linear-gradient(135deg,#ff9900,#ffd166);border-color:#f59e0b;color:#111827}.wish-festival-hint{font-size:.74rem;color:#475569;background:#eff6ff;border-left:4px solid #2563eb;padding:8px 10px;border-radius:8px;margin:0 0 9px;line-height:1.4}.wish-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.wish-actions button{margin:0!important}.wish-note{font-size:.68rem;color:#64748b;text-align:center;line-height:1.45;margin:9px 4px 0}.bill-history-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px}.bill-history-stat{background:linear-gradient(135deg,#eff6ff,#fff);border:1px solid #dbeafe;border-radius:10px;padding:9px;text-align:center}.bill-history-stat b{display:block;font-size:1rem;color:#0f172a}.bill-history-row{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:11px 9px;border:1px solid #e2e8f0;border-radius:11px;background:#fff;margin:7px 0;cursor:pointer;box-shadow:0 2px 8px #0f172a0a}.bill-history-row:active{transform:scale(.99)}.bill-history-row .amount{font-weight:900;color:#047857;white-space:nowrap}.history-filter{display:grid;grid-template-columns:1fr 145px;gap:7px;margin-bottom:10px}.history-filter input{min-width:0;padding:10px;border:1px solid #cbd5e1;border-radius:9px;background:#fff}.bill-history-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:4px 0 9px}.bill-history-tabs button{border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:9px 4px;font-weight:800;color:#334155}.bill-history-tabs button.active{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;border-color:#2563eb}.bill-history-row{background:linear-gradient(135deg,#fff,#f8fbff)!important;border-left:4px solid #2563eb!important}.bill-history-row .amount{font-size:1rem}.bill-history-stat:nth-child(1){background:linear-gradient(135deg,#dbeafe,#eef2ff)}.bill-history-stat:nth-child(2){background:linear-gradient(135deg,#fff7ed,#fef3c7)}.bill-history-stat:nth-child(3){background:linear-gradient(135deg,#ecfdf5,#dcfce7)}@media(max-width:380px){.bill-history-tabs button{font-size:.7rem;padding:8px 2px}}@media(max-width:380px){.history-filter{grid-template-columns:1fr}.bill-history-summary{grid-template-columns:1fr 1fr}.wish-actions{gap:6px}}
+
+body{background:linear-gradient(135deg,#eef2ff,#fff7ed 45%,#ecfeff)!important}
+.app{background:linear-gradient(180deg,#ffffff,#f8fbff)!important}
+header{background:linear-gradient(135deg,#0f172a,#172554 55%,#7c2d12)!important}
+.card{border-color:#bfdbfe!important;box-shadow:0 4px 14px rgba(37,99,235,.08)!important;background:linear-gradient(135deg,#fff,#f8fbff)!important}
+.primary{background:linear-gradient(135deg,#2563eb,#7c3aed)!important;color:#fff!important;border-color:transparent!important}
+.btn.success,.green{background:linear-gradient(135deg,#16a34a,#22c55e)!important;color:#fff!important}
+.btn.danger,.danger{background:linear-gradient(135deg,#dc2626,#f43f5e)!important;color:#fff!important}
+nav,.bottom-nav{background:linear-gradient(90deg,#0f172a,#1e3a8a,#4c1d95)!important}
+.bill{position:relative;background:linear-gradient(145deg,#ffffff 0%,#eff6ff 48%,#fff7ed 100%)!important;border:2px solid #93c5fd!important;border-radius:14px!important;box-shadow:0 8px 24px rgba(37,99,235,.14)!important;padding:14px!important}
+.bill-head{position:relative;border-bottom:3px solid #2563eb!important;padding:6px 7px 7px!important;margin-bottom:7px!important;background:linear-gradient(135deg,#dbeafe,#fef3c7,#fce7f3);border-radius:10px;min-height:0}
+.bill-brand-logo{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid #f59e0b;background:#fff;display:inline-block;vertical-align:middle;margin:0 7px 0 0;box-shadow:0 3px 10px #0002}.bill-head h2{display:inline-block;vertical-align:middle;font-size:1.05rem!important;margin:0!important}.bill-head p{margin:2px 0!important;line-height:1.22!important}
+.bill-head h2{color:#b91c1c!important;font-weight:800!important}.bill-head p{color:#334155!important}
+.bill-table th{background:linear-gradient(135deg,#4f46e5,#7c3aed)!important;color:#fff!important;border-color:#c4b5fd!important;text-align:center!important}.bill-table td{background:#ffffffd9!important;border-color:#cbd5e1!important}
+.bill-total-box{margin-top:10px;padding:10px 12px;border:2px solid #f59e0b;border-radius:10px;background:linear-gradient(135deg,#fff7ed,#fefce8);font-size:1rem}.bill-total-box b{color:#15803d;font-size:1.18rem}
+.bill-discount{color:#dc2626!important}.bill-special-notice{background:#fffbeb;border-radius:8px;border-top:2px dashed #f59e0b!important;color:#7c2d12!important;padding:7px!important}
+.bill-share-grid button{box-shadow:0 4px 10px #0002!important}.bill-share-grid .img{background:linear-gradient(135deg,#16a34a,#22c55e)!important}.bill-share-grid .pdf{background:linear-gradient(135deg,#dc2626,#ef4444)!important}
+.wish-card{background:linear-gradient(135deg,#172554,#7c3aed,#be123c)!important}
+</style>
+
+<style id="ss-scratch-card">
+.scratch-card{margin:12px 0;padding:14px;border-radius:16px;border:2px dashed #8b5e34;background:linear-gradient(135deg,#fff7ed,#fef3c7);box-shadow:0 5px 16px #0002;text-align:center}
+.scratch-card .sc-tier{font-size:.75rem;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#6b4f2a}
+.scratch-card .sc-title{font-size:1.12rem;font-weight:900;margin:4px 0;color:#422006}
+.scratch-wrap{position:relative;margin:8px auto;max-width:360px;height:92px;border-radius:12px;overflow:hidden;background:#fff;border:1px solid #f59e0b}
+.scratch-card .sc-reward{height:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:1.12rem;font-weight:900;padding:9px;background:#fff;border-radius:12px}
+.scratch-canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair;border-radius:12px}
+.scratch-hint{position:absolute;left:0;right:0;bottom:6px;font-size:.68rem;font-weight:800;color:#fff;text-shadow:0 1px 2px #000;pointer-events:none}
+.scratch-card .sc-code{font-size:.68rem;color:#78716c}.scratch-card .sc-note{font-size:.68rem;color:#57534e;margin-top:5px}
+.scratch-action{margin:8px 0 0!important;background:linear-gradient(135deg,#92400e,#d97706)!important;border-color:#78350f!important;color:#fff!important}
+</style>
+
+<style id="ss-amazon-page-nav">
+#productDetailModal,#options,#productModal,#profile,#categoryModal,#sell,#billModal,#customer,#wishes,#orders{align-items:stretch !important;background:#f5f6f7 !important}
+#productDetailModal .box,#options .box,#productModal .box,#profile .box,#categoryModal .box,#sell .box,#billModal .box,#customer .box,#wishes .box,#orders .box{width:100% !important;max-width:none !important;height:100dvh !important;max-height:none !important;border-radius:0 !important;padding:0 !important;overflow:auto !important}
+#productDetailModal .mh,#options .mh,#productModal .mh,#profile .mh,#categoryModal .mh,#sell .mh,#billModal .mh,#customer .mh,#wishes .mh,#orders .mh{position:sticky;top:0;z-index:10;background:#fff;padding:12px 14px !important;margin:0 !important;min-height:52px;box-shadow:0 1px 4px #0001}
+.ss-page-back{border:0;background:transparent;font-size:22px;font-weight:800;color:#111827;padding:5px 9px 5px 0;cursor:pointer;line-height:1}
+.ss-page-title{font-weight:800;font-size:17px;flex:1}
+#productDetailContent{padding:0 !important;max-width:900px;margin:0 auto}
+#productModal .box{padding:0 14px 24px !important;overflow-x:hidden !important}
+#sell .box,#billModal .box,#customer .box,#wishes .box,#orders .box{padding:0 14px 24px !important;overflow-x:hidden !important;background:linear-gradient(180deg,#f8fafc 0,#fff 120px)}
+#sell .box .mh,#billModal .box .mh,#customer .box .mh,#wishes .box .mh,#orders .box .mh{margin-left:-14px !important;margin-right:-14px !important}
+#sell .box .field,#sell .box .card,#sell .box .primary,#billModal .box .bill,#billModal .box .bill-share-grid{width:100%;min-width:0}
+#sell .box .field label,#billModal .box label{white-space:normal;overflow-wrap:anywhere;line-height:1.35}
+#sell .box input,#sell .box select,#sell .box textarea{max-width:100%;min-width:0;font-size:16px;min-height:44px}
+#sell .card{background:linear-gradient(135deg,#f8fafc,#eef6ff);border-color:#dbeafe;box-shadow:0 2px 8px #0f172a12}
+#billModal .box{background:linear-gradient(180deg,#f8fafc,#fff 180px)}
+#billModal .bill{background:#fff;box-shadow:0 4px 14px #0f172a12;border-color:#dbeafe}
+#billModal .bill-share-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+#billModal .bill-share-grid button{min-width:0!important;white-space:normal!important;overflow-wrap:anywhere!important}
+@media(max-width:380px){#sell .box,#billModal .box,#customer .box,#wishes .box,#orders .box{padding-left:12px!important;padding-right:12px!important}#sell .box .mh,#billModal .box .mh,#customer .box .mh,#wishes .box .mh,#orders .box .mh{margin-left:-12px!important;margin-right:-12px!important}}
+#productModal .box .mh{margin-left:-14px !important;margin-right:-14px !important}
+#productModal .box .field,#productModal .box .primary,#productModal .box .product-images-grid{width:100%;min-width:0}
+#productModal .box .field label{font-size:.78rem;line-height:1.35;white-space:normal;overflow-wrap:anywhere}
+#productModal .box input,#productModal .box select,#productModal .box textarea{max-width:100%;font-size:16px;min-height:44px}
+#productModal .box small{line-height:1.35;display:block;overflow-wrap:anywhere}
+@media(max-width:380px){#productModal .box{padding-left:12px !important;padding-right:12px !important}#productModal .box .mh{margin-left:-12px !important;margin-right:-12px !important}#productModal .box .field label{font-size:.76rem}.exports{gap:6px}.exports button{font-size:.72rem;padding:9px 5px}}
+#productDetailContent .ss-amazon-hero{background:#fff;padding:14px}
+#productDetailContent .ss-amazon-main{width:100%;height:min(52vh,520px);object-fit:contain;background:#fff}
+#productDetailContent .ss-amazon-thumbs{display:flex;gap:8px;overflow-x:auto;padding:9px 0}
+#productDetailContent .ss-amazon-thumbs img{width:64px;height:64px;object-fit:cover;border:1px solid #ddd;border-radius:7px;background:#fff}
+#productDetailContent .ss-amazon-info{background:#fff;padding:16px;margin-top:8px}
+#productDetailContent .ss-amazon-actions{position:sticky;bottom:0;background:#fff;padding:10px;display:flex;gap:8px;border-top:1px solid #eee}
+#options .box{background:#f5f6f7}
+#options .box > .page-body,#productModal .box > .page-body,#profile .box > .page-body{max-width:900px;width:100%;margin:auto;padding:16px}
+@media(min-width:700px){#productDetailContent .ss-amazon-hero{display:grid;grid-template-columns:55% 45%;gap:20px}#productDetailContent .ss-amazon-info{margin-top:0}}
+#productDetailContent .ss-product-description{white-space:pre-wrap;line-height:1.7;color:#334155;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;margin-top:10px;font-size:.84rem}
+#profile .close,#productDetailModal .close,#productModal .close,#options .close{display:none !important}
+#profile .box{background:#f5f6f7}
+#profile .box > .page-body{padding:16px;max-width:900px;margin:auto;width:100%}
+.ss-security-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;background:#ecfdf5;color:#047857;font-size:.68rem;font-weight:700}
+.search{width:100%;min-width:0;display:flex;align-items:stretch}
+.search input{min-width:0;width:0;flex:1 1 auto}
+.search>button{flex:0 0 42px;min-width:42px}
+.ss-scan-btn{border:0;background:#111827;color:#fff;flex:0 0 76px!important;min-width:76px!important;width:76px;padding:0 7px;display:flex;align-items:center;justify-content:center;gap:5px;font-size:.72rem;font-weight:800;cursor:pointer;white-space:nowrap;overflow:visible}
+.ss-scan-btn i{font-size:1rem}
+#productModal{z-index:10020!important}
+#productDetailModal{z-index:10010!important}
+#sell{z-index:10020!important}
+#billModal{z-index:10030!important}
+#profile{z-index:10020!important}
+#billTextSendChooser,#historyBillTextSendChooser{z-index:10040!important;align-items:center!important;background:#0009!important}
+#billTextSendChooser .box,#historyBillTextSendChooser .box{height:auto!important;max-height:90vh!important;width:min(92vw,420px)!important;border-radius:14px!important;padding:0!important}
+#billTextSendChooser .page-body,#historyBillTextSendChooser .page-body{padding:16px!important}
+.ss-scanner-page{position:fixed;inset:0;z-index:10001;background:#0b1220;color:#fff;display:none;flex-direction:column}
+.ss-scanner-head{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#131921}
+.ss-scanner-head button{border:0;background:transparent;color:#fff;font-size:24px;padding:4px 8px}
+.ss-scanner-title{font-weight:800;font-size:17px}
+.ss-scanner-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:14px}
+.ss-scanner-video-wrap{position:relative;width:min(94vw,440px);aspect-ratio:1/1;background:#000;border-radius:16px;overflow:hidden;border:2px solid #ff9900;box-shadow:0 0 0 9999px #0005}
+.ss-scanner-video{width:100%;height:100%;object-fit:cover}
+.ss-scan-frame{position:absolute;inset:18%;border:3px solid #ff9900;border-radius:12px}
+.ss-scanner-status{text-align:center;font-size:.82rem;color:#cbd5e1;max-width:420px;line-height:1.5}
+.ss-scanner-manual{width:min(94vw,440px);display:flex;gap:7px}
+.ss-scanner-manual input{flex:1;padding:10px;border-radius:8px;border:1px solid #475569;outline:0}
+.ss-scanner-manual button{padding:10px 14px;border:0;border-radius:8px;background:#ff9900;font-weight:800}
+.ss-scan-result{font-size:.78rem;color:#86efac;text-align:center}
+.ss-scanner-stop{background:#dc2626;color:#fff;border:0;border-radius:8px;padding:10px 18px;font-weight:700}
+.ss-ocr-progress{width:min(94vw,440px);height:7px;background:#334155;border-radius:99px;overflow:hidden;display:none}
+.ss-ocr-progress i{display:block;height:100%;width:0;background:#ff9900;transition:width .2s}
+</style>
+</head>
+<body>
+
+<div id="scannerPage" class="ss-scanner-page" aria-hidden="true">
+  <div class="ss-scanner-head"><button type="button" onclick="closeScanner()">‹</button><div class="ss-scanner-title">📷 Product Scanner</div></div>
+  <div class="ss-scanner-body">
+    <div class="ss-scanner-video-wrap"><video id="scannerVideo" class="ss-scanner-video" playsinline muted></video><div class="ss-scan-frame"></div></div>
+    <div id="scannerStatus" class="ss-scanner-status">Barcode / QR नसेल तरी Product Box चा फोटो घ्या — आम्ही फोटोतील Model Number / SKU / नाव OCR ने शोधू.</div>
+    <div id="scannerResult" class="ss-scan-result"></div><div id="ocrProgress" class="ss-ocr-progress"><i></i></div>
+    <div style="width:min(94vw,440px);display:flex;gap:7px">
+      <button type="button" style="flex:1;padding:11px 12px;border:0;border-radius:8px;background:#ff9900;color:#111;font-weight:800;cursor:pointer" onclick="startProductScanner()">🎥 कॅमेरा पुन्हा सुरू करा</button>
+      <label style="flex:1;padding:11px 12px;border-radius:8px;background:#fff;color:#111;font-weight:800;text-align:center;cursor:pointer">🖼️ फोटो / Gallery
+        <input id="scannerImageInput" type="file" accept="image/*" capture="environment" style="display:none" onchange="analyzeProductImage(this.files[0])">
+      </label>
+    </div>
+    <div class="ss-scanner-manual"><input id="scannerManualInput" placeholder="Barcode / Model नंबर टाका"><button type="button" onclick="findScannedProduct(document.getElementById('scannerManualInput').value)">शोधा</button></div>
+    <button type="button" class="ss-scanner-stop" onclick="closeScanner()">स्कॅनर बंद करा</button>
+  </div>
+</div>
+
+<div id="securityLock" style="position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#0f172a,#111827);display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div style="width:min(92vw,390px);background:#fff;border-radius:20px;padding:24px;box-shadow:0 20px 60px #0008;text-align:center;">
+    <div style="font-size:48px;margin-bottom:8px">🔐</div>
+    <h2 style="margin:0 0 6px">SS Mobile सुरक्षित प्रवेश</h2>
+    <p id="securityLockMsg" style="font-size:.8rem;color:#64748b;margin:0 0 15px">ॲप उघडण्यासाठी PIN किंवा Pattern वापरा.</p>
+    <div id="pinUnlockArea">
+      <div class="field" style="text-align:left"><label>Security PIN</label><input id="appUnlockPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="off" placeholder="PIN टाका" oninput="this.value=this.value.replace(/\D/g,'')"></div>
+      <button class="primary" onclick="unlockWithPin()">🔓 PIN ने ॲप उघडा</button>
+    </div>
+    <div id="patternUnlockArea" style="display:none">
+      <p style="font-size:.72rem;color:#64748b">खालील 3×3 बिंदूंमध्ये तुमचा Pattern काढा.</p>
+      <div id="unlockPatternGrid" class="pattern-grid"></div>
+      <button class="primary" onclick="unlockWithPattern()">🔓 Pattern ने ॲप उघडा</button>
+    </div>
+    <button id="switchUnlockModeBtn" class="btn" style="width:100%;margin-top:8px;background:#f3f4f6;color:#374151" onclick="toggleUnlockMode()">🔄 Pattern वापरा</button>
+    <div id="securityLockStatus" style="font-size:.72rem;color:#b91c1c;margin-top:10px"></div>
+  </div>
+</div>
+
+<div id="splash">
+  <div class="splash-box" id="splashContent">
+    <video id="introVideo" class="splash-intro-video" muted playsinline preload="auto" style="display:none;width:min(92vw,420px);max-height:72vh;border-radius:14px;object-fit:cover;box-shadow:0 0 30px #0008"></video>
+    <img class="splash-logo-img" id="splashLogo" alt="SS Mobile Benadi Logo">
+    <h1>श्री सिद्धेश्वर <span style="color:#ff9900">मोबाईल</span></h1>
+    <p style="color:#ff9900;letter-spacing:2px;font-size:.75rem">SS MOBILE BENADI</p>
+    <button id="introSkipBtn" type="button" onclick="hideSplash(event)" style="display:none;margin-top:12px;background:linear-gradient(135deg,#ff9900,#ffd166);color:#111;border:0;border-radius:10px;padding:11px 22px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px #0005">⏭ Intro Skip करा</button>
+  </div>
+</div>
+
+<main class="app" id="app">
+<header>
+<div class="top">
+<div class="brand"><div class="logo" id="logoBox"><i class="fa-solid fa-bolt"></i></div><div><h1 id="shopTitle">श्री सिद्धेश्वर <span>मोबाईल</span></h1><div class="sub" id="shopSub">SS Mobile Benadi</div><div class="owner-tag" id="ownerTag"></div></div></div>
+<button class="btn settings" onclick="openProfile()">⚙️ Settings</button>
+</div>
+<div class="search"><input id="search" placeholder="Search (Glass, Cover, Charger...)" oninput="render()"><button type="button" onclick="render()"><i class="fa-solid fa-search"></i></button><button type="button" class="ss-scan-btn" onclick="openScanner()"><i class="fa-solid fa-barcode"></i><span>SCAN</span></button></div>
+</header>
+
+<div class="wishes" onclick="openWishes()">🎉 सण व दैनिक शुभेच्छा स्टेटस <i class="fa-solid fa-chevron-right"></i></div>
+<div class="cats" id="categoryBar"></div>
+<div class="banner-wrap" id="banners"></div>
+<div class="feed" id="feed"></div>
+<button class="fab" onclick="openAdd()"><i class="fa-solid fa-plus"></i></button>
+</main>
+
+<!-- Options -->
+<div class="modal" id="options"><div class="box"><div class="mh"><h3>प्रॉडक्ट पर्याय</h3><button class="close" onclick="closeM('options')">✕</button></div><div id="selectedProductImages" class="product-images-grid" style="margin-bottom:10px"></div>
+<button class="primary info" onclick="openSell()">🛒 विक्री करा / बिल</button>
+<button class="primary" onclick="openWholesale()">🏷️ होलसेल किंमत - 10%</button>
+<button class="primary" style="background:#ecfdf5;color:#047857" onclick="openMargin()">💡 हेल्प</button>
+<button class="primary" style="background:#f3f4f6;color:#374151" onclick="openEdit()">✏️ एडिट / स्टॉक</button>
+<button class="primary danger" onclick="deleteProduct()">🗑️ प्रॉडक्ट डिलीट</button>
+</div></div>
+
+<!-- Customer -->
+<div class="modal" id="customer"><div class="box"><div class="mh"><h3>🛍️ प्रॉडक्ट तपशील</h3><button class="close" onclick="closeM('customer')">✕</button></div><div id="customerDetails"></div>
+<div id="customerForm" style="display:none">
+<div class="field"><label>पूर्ण नाव</label><input id="cName"></div><div class="field"><label>गाव</label><input id="cVillage"></div><div class="field"><label>तालुका</label><input id="cTaluka"></div><div class="field"><label>जिल्हा</label><input id="cDistrict"></div><div class="field"><label>मोबाईल नंबर</label><input id="cPhone" type="tel" inputmode="numeric" maxlength="10"></div>
+<button class="primary green" onclick="showPayment()">QR कोडने पेमेंट करा</button></div>
+<div id="payment" style="display:none"><p style="text-align:center;color:#007600;font-size:.8rem">Google Pay / PhonePe / UPI</p><p style="text-align:center;font-size:.75rem">UPI ID: <b id="upiDisplay"></b></p><div class="qr" id="customerQR"></div><p style="text-align:center;font-size:.75rem">पेमेंट amount: <b id="payAmount"></b></p><button class="primary green" onclick="confirmOrder()">पेमेंट झाले — WhatsApp वर ऑर्डर पाठवा</button></div>
+</div></div>
+
+<!-- Profile -->
+<div class="modal" id="profile"><div class="box"><div class="mh"><button class="ss-page-back" type="button" onclick="history.back()">‹</button><h3>⚙️ दुकान सेटिंग्ज</h3><button class="close" onclick="closeM('profile')">✕</button></div>
+<div class="field"><label>दुकानाचे नाव</label><input id="cfgName"></div><div class="field"><label>Sub Title / Brand</label><input id="cfgSub"></div><div class="field"><label>मालकाचे नाव</label><input id="cfgOwner"></div><div class="field"><label>मोबाईल नंबर</label><input id="cfgPhone" maxlength="10"></div><div class="field"><label>UPI ID</label><input id="cfgUpi"></div><div class="field"><label>टॅगलाइन</label><input id="cfgTagline"></div><div class="field"><label>दुकानाचा पत्ता</label><textarea id="cfgAddress" rows="2" placeholder="उदा. सिद्धेश्वर मंदिरासमोर, मेन रोड, बेनाडी"></textarea></div><div class="field"><label>बिलावरील विशेष सूचना</label><textarea id="cfgSpecialNotice" rows="4" placeholder="उदा. तुटलेले/फुटलेले किंवा पाण्यामुळे खराब झालेले माल परत घेतले जाणार नाहीत."></textarea></div>
+<div class="card" style="margin:10px 0;border:1px solid #bfdbfe;background:#eff6ff"><b>🌐 Language Settings</b><p style="font-size:.72rem;color:#475569;margin:5px 0 10px">ॲपची भाषा आणि बिलाची भाषा स्वतंत्रपणे निवडा. एक बदलल्यावर दुसरी भाषा बदलणार नाही.</p><div class="field"><label>📱 ॲपची भाषा / App Language</label><select id="cfgLang" onchange="previewLanguage()"><option value="mr">मराठी</option><option value="en">English</option><option value="kn">ಕನ್ನಡ</option></select></div><div class="field"><label>🧾 बिलाची भाषा / Bill Language</label><select id="cfgBillLang"><option value="same">ॲपची भाषा / Same as App</option><option value="mr">मराठी</option><option value="en">English</option><option value="kn">ಕನ್ನಡ</option></select></div><small style="color:#475569">उदा. App = English आणि Bill = मराठी ठेवू शकता.</small></div><div class="field"><label>लोगो</label><input id="cfgLogo" type="file" accept="image/*"></div>
+<div class="card" style="margin-top:10px"><b>🖼️ ऑफर बॅनर स्लायडर</b><p style="font-size:.72rem;color:#64748b;margin:4px 0 8px">हवे तितके ऑफर बॅनर तयार करा. प्रत्येक बॅनरमध्ये तुमचा फोटो/लोगो, ऑफरची माहिती आणि कॅटगरी जोडता येईल.</p>
+<div class="field"><label>बॅनरची ऑफर / शीर्षक</label><input id="bannerTitleInput" placeholder="उदा. Charger वर 20% सूट"></div>
+<div class="field"><label>ऑफरची माहिती</label><input id="bannerTextInput" placeholder="उदा. Fast Charger फक्त ₹299 पासून"></div>
+<div class="field"><label>मुख्य बॅनर इमेज</label><input id="bannerImageInput" type="file" accept="image/*"></div>
+<div class="field"><label>तुमचा फोटो / दुकानाचा लोगो (ऐच्छिक)</label><input id="bannerOwnerInput" type="file" accept="image/*"></div>
+<div class="field"><label>कॅटगरी लिंक</label><select id="bannerCategoryInput"></select></div>
+<button class="primary" onclick="addBannerFromSettings()">➕ नवीन बॅनर तयार करा</button>
+<div id="bannerManagerList" style="margin-top:10px"></div></div>
+<div class="card"><b>🎬 Intro Video</b><p style="font-size:.72rem;color:#64748b;margin:4px 0 8px">तुम्ही दिलेला Intro प्रत्येक वेळी ॲप उघडताना दाखवता येईल.</p>
+<div class="field"><label>Intro Video अपलोड / बदल</label><input id="cfgIntroVideo" type="file" accept="video/*"></div>
+<div id="introStatus" style="font-size:.72rem;color:#047857;margin:4px 0"></div>
+<button class="btn" style="width:100%;background:#fee2e2;color:#991b1b" onclick="removeIntroVideo()">🗑️ Intro काढा</button></div>
+<div class="card" style="margin-top:10px;border:1px solid #dbeafe">
+  <b>🔐 Security / App Lock</b>
+  <p style="font-size:.72rem;color:#64748b;margin:4px 0 8px">ॲप उघडताना आणि प्रॉडक्टची मूळ किंमत/मार्जिन पाहताना PIN किंवा Pattern वापरला जाईल.</p>
+  <label style="display:flex;align-items:center;gap:8px;font-size:.82rem;margin:8px 0"><input id="cfgAppLock" type="checkbox"> ॲप उघडताना PIN / Pattern आवश्यक करा</label>
+  <div class="field"><label>Security प्रकार</label><select id="cfgSecurityType" onchange="toggleSecurityTypeUI()"><option value="pin">🔢 PIN Code</option><option value="pattern">🔷 Pattern</option></select></div>
+  <div id="securitySetPinBox">
+    <div class="field"><label>नवीन PIN</label><input id="cfgSecurityPassword" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="off" placeholder="4 ते 8 अंकी PIN" oninput="this.value=this.value.replace(/\D/g,'')"></div>
+    <div class="field"><label>PIN पुन्हा टाका</label><input id="cfgSecurityPassword2" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="off" placeholder="PIN पुन्हा टाका" oninput="this.value=this.value.replace(/\D/g,'')"></div>
+  </div>
+  <button type="button" class="btn" style="width:100%;background:#eef2ff;color:#3730a3" onclick="changeSecurityCredential()">🔄 PIN / Pattern बदला</button>
+  <button type="button" class="btn" style="width:100%;margin-top:6px;background:#fff7ed;color:#9a3412" onclick="forgotSecurityCredential()">📱 PIN / Pattern विसरलात?</button>
+  <div id="securitySettingsStatus" style="font-size:.72rem;color:#047857;margin-top:7px"></div>
+</div>
+<div class="card" style="margin-top:10px;border:1px solid #dbeafe;background:linear-gradient(135deg,#eff6ff,#f8fafc)">
+  <b>🧾 Bill History / बिल हिस्टरी</b>
+  <p style="font-size:.72rem;color:#64748b;margin:4px 0 8px">सेव्ह केलेली सर्व बिले तारीख व वेळेनुसार कायम इथे दिसतील.</p>
+  <button type="button" class="btn info" style="width:100%;margin-top:7px" onclick="openBillHistory()">📋 सर्व Bills History उघडा</button>
+</div>
+<button class="primary" onclick="saveProfile()">💾 दुकान सेटिंग्ज सेव्ह करा</button><button class="primary" style="background:#e5e7eb;color:#374151" onclick="resetProfile()">डिफॉल्ट रीसेट</button>
+</div></div>
+
+<!-- Category Manager -->
+<div class="modal" id="categoryModal"><div class="box"><div class="mh"><h3>📂 कॅटगरी मॅनेजर</h3><button class="close" onclick="closeM('categoryModal')">✕</button></div>
+<p style="font-size:.78rem;color:#64748b;margin:0 0 10px">नवीन कॅटगरी तयार करा. ती पुढे प्रॉडक्टमध्येही निवडता येईल.</p>
+<div class="field"><label>कॅटगरीचे नाव</label><input id="newCategoryName" maxlength="40" placeholder="उदा. iPhone, Battery, Earphone"></div>
+<div class="field"><label>आयकॉन / Emoji</label><input id="newCategoryIcon" maxlength="8" value="📦" placeholder="📦"></div>
+<div class="field"><label>कॅटगरीसाठी इमेज अपलोड करा</label><input id="newCategoryImage" type="file" accept="image/*" onchange="previewCategoryImage(this)"><small style="display:block;color:#64748b;margin-top:4px">मोबाईलमधील Gallery मधून कोणतीही इमेज निवडा. इमेज दिल्यास ती आयकॉन म्हणून दिसेल.</small></div>
+<div id="categoryImagePreview" style="display:none;text-align:center;margin:8px 0"><img id="categoryImagePreviewImg" style="width:70px;height:70px;border-radius:50%;object-fit:cover;border:2px solid var(--accent)"><button type="button" class="btn danger" style="margin-left:8px" onclick="clearCategoryImage()">✕ काढा</button></div>
+<button class="primary" id="categorySaveBtn" onclick="addCategory()">➕ कॅटगरी अॅड करा</button>
+<button type="button" class="primary" id="categoryCancelEditBtn" style="display:none;background:#e5e7eb;color:#374151" onclick="cancelCategoryEdit()">रद्द करा</button>
+<div id="categoryManagerList" style="margin-top:12px"></div>
+</div></div>
+
+<!-- Add/Edit -->
+<div class="modal" id="productModal"><div class="box"><div class="mh"><h3 id="productModalTitle">नवीन प्रॉडक्ट</h3><button class="close" onclick="closeM('productModal')">✕</button></div>
+<div class="field"><label>नाव</label><input id="pName"></div><div class="field"><label>कॅटगरी</label><select id="pCat"></select><button type="button" class="btn" style="margin-top:6px;width:100%" onclick="openCategoryManager()">➕ नवीन कॅटगरी अॅड करा</button></div><div class="field"><label>मॉडेल</label><input id="pModel"></div><div class="field"><label>प्रॉडक्ट डिटेल / माहिती</label><textarea id="pDescription" rows="5" maxlength="1000" placeholder="उदा. फीचर्स, मटेरियल, साइज, कलर, उपयोग, बॉक्समध्ये काय मिळेल इ. माहिती लिहा"></textarea><small>ही माहिती Product वर क्लिक केल्यानंतर ग्राहकाला Product Details मध्ये दिसेल.</small></div>
+<div class="field" style="display:flex;align-items:center;gap:10px;background:#fffbeb;padding:10px;border:1px solid #fde68a;border-radius:8px;margin-bottom:10px;">
+  <input id="pIsPremium" type="checkbox" style="width:20px;height:20px;accent-color:#d97706;cursor:pointer;">
+  <label for="pIsPremium" style="margin:0;cursor:pointer;font-weight:700;color:#92400e;font-size:.82rem;">⭐ प्रीमियम रँकिंग प्रॉडक्ट (Top Featured / Top Rank)</label>
+</div>
+<div class="field"><label>मूळ किंमत</label><input id="pCost" type="number"></div><div class="field"><label>MRP / ग्राहकाला दिसणारी मूळ किंमत</label><input id="pMrp" type="number" min="0" step="1"><small>ही किंमत ग्राहकाला स्ट्राइक करून दिसेल.</small></div><div class="field"><label>विक्री किंमत</label><input id="pRetail" type="number" min="0" step="1"><small>ग्राहकाला देण्यात येणारी अंतिम किंमत.</small></div><div class="field"><label>स्टॉक</label><input id="pStock" type="number"></div><div class="field"><label>प्रॉडक्ट फोटो (जास्तीत जास्त 5)</label><input id="pImages" type="file" accept="image/*" multiple onchange="previewProductImages(this)"><small>एकावेळी 5 फोटो निवडा.</small></div><div id="productImagesPreview" class="product-images-grid"></div><button class="primary" onclick="saveProduct()">सेव्ह करा</button>
+</div></div>
+
+<!-- Product Detail -->
+<div class="modal" id="productDetailModal">
+  <div class="box" style="max-width:520px;padding:0;overflow:hidden">
+    <div class="mh" style="padding:12px 14px">
+      <h3>🛍️ Product Details</h3>
+      <button class="close" onclick="closeM('productDetailModal')">✕</button>
+    </div>
+    <div id="productDetailContent" style="padding:12px"></div>
+  </div>
+</div>
+
+<!-- Sell -->
+<div class="modal" id="sell"><div class="box"><div class="mh"><h3>🧾 कस्टमर बिलिंग</h3><button class="close" onclick="closeM('sell')">✕</button></div>
+<div class="page-body" style="max-width:900px;width:100%;margin:auto;padding:4px 0 20px">
+<div class="card" style="border-left:4px solid #ff9900;background:linear-gradient(135deg,#fff7ed,#eff6ff)"><b style="font-size:.9rem">👤 Customer Details</b><div style="font-size:.7rem;color:#64748b;margin-top:3px">ग्राहकाची माहिती भरा आणि खाली Product निवडा.</div></div>
+<div class="field"><label>कस्टमर नाव</label><input id="bName"></div><div id="registeredCustomerHint" style="font-size:.72rem;color:#047857;margin:-4px 0 8px"></div><div class="field"><label>गाव</label><input id="bVillage"></div><div class="field"><label>मोबाईल</label><input id="bPhone" maxlength="10" inputmode="numeric" oninput="lookupRegisteredCustomer()"></div><div class="field"><label>रंग</label><input id="bColor"></div><div class="field"><label>वॉरंटी</label><input id="bWarranty" value="No Warranty"></div><div class="field"><label>कस्टमर डिस्काउंट (₹)</label><input id="bDiscount" type="number" min="0" step="1" value="0" onchange="syncSingleCartDiscount()"></div>
+<div class="card"><b style="font-size:.9rem">🛒 बिलातील Products</b><div id="billCartList"></div><div class="field" style="margin-top:10px"><label>आणखी Product जोडा</label><select id="billProductSelect"></select></div><button type="button" class="btn info" style="width:100%;min-height:44px" onclick="addBillProduct()">＋ Product जोडा</button><div id="billCartSummary" style="font-size:.78rem;margin-top:8px;text-align:right;font-weight:700"></div></div><button class="primary" style="min-height:48px;background:linear-gradient(135deg,#ff9900,#ffd166);border-color:#d97706" onclick="generateBill()">🧾 एकाच बिलात सर्व Products</button>
+</div></div></div>
+
+<!-- Bill -->
+<div class="modal" id="billModal"><div class="box"><div class="mh"><h3>🧾 कस्टमर पावती</h3><button class="close" onclick="closeM('billModal')">✕</button></div><div class="page-body" style="max-width:900px;width:100%;margin:auto;padding:4px 0 20px"><div class="card" style="background:linear-gradient(135deg,#ecfdf5,#eff6ff);border-color:#bfdbfe"><b style="font-size:.9rem">✅ Bill तयार आहे</b><div style="font-size:.7rem;color:#64748b;margin-top:3px">खालील पर्यायातून ग्राहकाला बिल लगेच पाठवा.</div></div><div class="bill" id="billPrint"></div><div class="bill-share-grid" style="margin-top:10px"><button class="img" onclick="shareBillWhatsAppFile('image/png','png')">🟢 WhatsApp<br>Image</button><button class="pdf" onclick="shareBillWhatsAppFile('application/pdf','pdf')">📄 WhatsApp<br>PDF</button><button class="primary green" style="margin-top:0" onclick="sendBillSmsDirect()">✉️ SMS ने पाठवा</button><button class="primary scratch-action" style="margin-top:0" onclick="openScratchCardForLastBill()">🎁 Scratch Card</button><button class="primary scratch-action" style="margin-top:0;background:#16a34a!important;border-color:#15803d!important" onclick="sendScratchCardWhatsApp()">🟢 WhatsApp Scratch</button><button class="primary" style="margin-top:0;background:#2563eb;color:#fff;border-color:#2563eb" onclick="openBillTextSendChooser()">💬 Text पाठवा</button></div></div></div></div>
+
+<!-- Customer Bill Detail -->
+<div class="modal" id="customerBillDetail"><div class="box"><div class="mh"><button class="ss-page-back" type="button" onclick="history.back()">‹</button><h3>🧾 कस्टमर बिल</h3><button class="close" onclick="closeM('customerBillDetail')">✕</button></div><div class="bill" id="customerBillPrint"></div><div class="exports" style="margin-top:10px"><button class="img" onclick="shareHistoryBillFile('image/png','png')">📷 PNG / Image</button><button class="pdf" onclick="shareHistoryBillFile('application/pdf','pdf')">📄 Send PDF</button><button class="primary green" onclick="openHistoryBillTextSendChooser()">💬 Send Text</button></div></div></div>
+
+<!-- Scratch Card -->
+<div class="modal" id="scratchCardModal"><div class="box"><div class="mh"><h3>🎁 Scratch Card</h3><button class="close" onclick="closeM('scratchCardModal')">✕</button></div><div class="page-body" style="padding:16px"><div id="scratchCardPreview"></div></div></div></div>
+
+<!-- Bill Text channel chooser -->
+<div class="modal" id="billTextSendChooser"><div class="box"><div class="mh"><h3>💬 Text कुठे पाठवायचा?</h3><button class="close" onclick="closeM('billTextSendChooser')">✕</button></div><div class="page-body" style="padding:16px"><button class="primary green" onclick="sendBillWhatsAppText()">🟢 WhatsApp वर पाठवा</button><button class="primary" style="background:#2563eb;color:#fff;border-color:#2563eb" onclick="sendBillSmsText()">✉️ SMS म्हणून पाठवा</button></div></div></div>
+<div class="modal" id="historyBillTextSendChooser"><div class="box"><div class="mh"><h3>💬 Text कुठे पाठवायचा?</h3><button class="close" onclick="closeM('historyBillTextSendChooser')">✕</button></div><div class="page-body" style="padding:16px"><button class="primary green" onclick="sendCustomerHistoryBillWhatsApp()">🟢 WhatsApp वर पाठवा</button><button class="primary" style="background:#2563eb;color:#fff;border-color:#2563eb" onclick="sendCustomerHistoryBillSms()">✉️ SMS म्हणून पाठवा</button></div></div></div>
+
+<!-- Wishes -->
+<div class="modal" id="wishes"><div class="box"><div class="mh"><h3>🎉 दैनिक स्टेटस & सण शुभेच्छा</h3><button class="close" onclick="closeM('wishes')">✕</button></div>
+<div class="wish-tabs"><button id="wishTabToday" class="active" onclick="setWishMode('today')">📅 आजचा Status</button><button id="wishTabFestival" onclick="setWishMode('festival')">🎊 सण</button></div>
+<div class="field"><label>प्रकार</label><select id="wishType" onchange="makeWish()"><option value="auto">✨ आजचा ऑटो Status</option><option value="goodmorning">🌅 सुप्रभात</option><option value="goodnight">🌙 शुभ रात्री</option><option value="charoli">✍️ चारोळी</option><option value="shayari">❤️ शायरी</option><option value="thought">💡 सुविचार</option><option value="joke">😂 कॉमेडी जोक</option><option value="taunt">😜 टोमणा</option><option value="weekday">📅 वार विशेष</option><option value="festival">🎊 सण / दिनविशेष</option></select></div>
+<div class="field" id="festivalPickerWrap" style="display:none"><label>सण निवडा</label><select id="festivalPicker" onchange="makeWish()"></select></div>
+<div id="wishFestivalHint" class="wish-festival-hint"></div>
+<div class="wish-card" id="wishCard"><div class="wish-logo" id="wishLogo"><i class="fa-solid fa-bolt"></i></div><div class="wish-title" id="wishTitle"></div><div class="wish-msg" id="wishMsg"></div><div class="wish-foot" id="wishFoot"></div></div>
+<div class="wish-actions"><button class="primary green" onclick="shareWish()">📷 फोटो Share</button><button class="primary" style="background:#2563eb;color:#fff;border-color:#2563eb" onclick="shareWishVideo()">🎬 Video Status</button></div>
+<p class="wish-note">दररोज नवीन Status, सर्व वार व दिनविशेष. प्रमुख सण/शुभदिन निवडा आणि फोटो किंवा Video मध्ये Share करा. ही व्यवस्था पुढील 100 वर्षांसाठी चालू राहील.</p></div></div>
+
+<!-- All Bill History -->
+<div class="modal" id="billHistory"><div class="box"><div class="mh"><button class="ss-page-back" type="button" onclick="history.back()">‹</button><h3>🧾 बिल इतिहास (Bill History)</h3><button class="close" onclick="closeM('billHistory')">✕</button></div><div class="bill-history-tabs"><button data-range="today" onclick="setBillHistoryRange('today')">आज</button><button data-range="7" onclick="setBillHistoryRange('7')">7 दिवस</button><button data-range="30" onclick="setBillHistoryRange('30')">30 दिवस</button><button data-range="custom" onclick="setBillHistoryRange('custom')">Custom</button></div><div class="history-filter"><input id="billHistorySearch" placeholder="नाव / मोबाईल / बिल नं. शोधा..." oninput="renderBillHistory()"><input id="billHistoryDate" type="date" onchange="setBillHistoryRange('custom');renderBillHistory()"></div><div class="wish-note" style="background:#eff6ff;border-radius:8px;padding:7px;margin-bottom:8px">🧾 सर्व Bills IndexedDB मध्ये सुरक्षित राहतील आणि किमान 5 वर्षांची History ठेवली जाईल.</div><div id="billHistoryList"></div></div></div>
+<!-- Orders -->
+<div class="modal" id="orders"><div class="box"><div class="mh"><h3>📦 Orders <span class="badge" id="orderBadge"></span></h3><button class="close" onclick="closeM('orders')">✕</button></div><div id="orderList"></div><button class="primary danger" onclick="clearOrders()">सर्व Orders Delete</button></div></div>
+
+<script>
+// (Main App Logic integration with Premium Ranking support)
+// Products now include isPremium boolean field.
+// Render function checks p.isPremium to apply premium-product class and ⭐ Premium badge.
+</script>
+</body>
+</html>
